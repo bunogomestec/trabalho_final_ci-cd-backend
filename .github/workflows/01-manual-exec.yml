@@ -1,0 +1,25 @@
+name: 'Trabalho Final CI-CD projeto backend'
+
+on:
+    workflow_dispatch:
+  
+jobs:
+  e2e-tests:
+    runs-on: ['ubuntu-latest']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      #- uses: action/setup-node@v4
+
+      - name: Instalando yarn
+        run: npm install -g yarn
+
+      - name: Instalando dependencias
+        run: yarn
+
+      - name: Instalando jest
+        run: yarn add --dev jest
+
+      - name: Testes backend
+        run: yarn  run test
