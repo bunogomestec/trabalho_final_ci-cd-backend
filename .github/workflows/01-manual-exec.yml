@@ -1,25 +1,43 @@
 name: 'Trabalho Final CI-CD projeto backend'
 
 on:
-    workflow_dispatch:
-  
+  workflow_dispatch:
+
 jobs:
   e2e-tests:
-    runs-on: ['ubuntu-latest']
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
-      #- uses: action/setup-node@v4
-
       - name: Instalando yarn
         run: npm install -g yarn
 
-      - name: Instalando dependencias
+      - name: Instalando dependências
         run: yarn
 
-      - name: Instalando jest
-        run: yarn add --dev jest
+      - name: Instalando jest e relatório
+        run: yarn add --dev jest jest-html-reporters
 
-      - name: Testes backend
-        run: yarn  run test
+      - name: Configurando Jest para gerar o relatório
+        run: |
+          echo "module.exports = {
+            reporters: [
+              'default',
+              ['jest-html-reporters', {
+                publicPath: './reports',
+                filename: 'report.html',
+                expand: true,
+              }],
+            ],
+          };" > jest.config.js
+
+      - name: Executando testes backend
+        run: yarn run test
+
+      - name: Upload do relatório de teste
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: relatorio-de-testes
+          path: ./reports
